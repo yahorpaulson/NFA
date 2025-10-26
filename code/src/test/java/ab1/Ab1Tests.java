@@ -21,7 +21,7 @@ import ab1.Ab1;
 import ab1.NFA;
 import ab1.Configuration;
 
-import ab1.impl.Nachnamen.Ab1Impl;
+import ab1.impl.Siarheyeu.Ab1Impl;
 
 public class Ab1Tests {
 	private static NFA n1; // leere Menge
@@ -116,7 +116,7 @@ public class Ab1Tests {
 
 		testNFASimpleAccept();
 		testNFASimpleReject();
-		
+
 	}
 
 	@Test
@@ -219,7 +219,7 @@ public class Ab1Tests {
 		assertTrue(test.accepts(n, "aa"));
 		assertTrue(test.accepts(n, "ab"));
 		assertTrue(test.accepts(n, "a b c"));
-		
+
 	}
 
 	@Test
@@ -329,7 +329,7 @@ public class Ab1Tests {
 		assertFalse(test.accepts(n, "a b c"));
 		assertTrue(test.accepts(n, "a b ca"));
 		assertTrue(test.accepts(n, "a b cb"));
-		
+
 	}
 
 	@Test
