@@ -11,10 +11,10 @@ public class Ab1Impl implements Ab1 {
 	@Override
 	public String[] matriculationNumbers() {
 		// TODO: Auto-generated method stub
-		return null;
+
 
 		//Tipp:
-		//return new String[] {"00000000", "11111111", "22222222"};
+		return new String[] {"11930943"};
 	}
 
 	@Override
