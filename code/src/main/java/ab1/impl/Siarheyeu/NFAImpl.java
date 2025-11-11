@@ -20,8 +20,8 @@ class NFAImpl implements NFA {
     public NFAImpl(
             int numStates,
             Integer initState,
-            Set<Integer>acceptingStates,
-            List<NFA.Transition>transitions
+            Set<Integer> acceptingStates,
+            List<NFA.Transition> transitions
     ) {
         if (numStates <= 0) {
             throw new IllegalArgumentException("Number of states must be positive");
@@ -82,21 +82,21 @@ class NFAImpl implements NFA {
 
     @Override
     public Set<Configuration> step(Configuration configuration) {
-        if(configuration == null){
+        if (configuration == null) {
             throw new NullPointerException("Configuration undefined");
         }
         int currentState = configuration.getState();
-        if(currentState < 0 || currentState >= this.numStates){
+        if (currentState < 0 || currentState >= this.numStates) {
             throw new IllegalArgumentException("Illegal state");
         }
         String word = configuration.getWord();
 
         Set<Integer> S0 = epsilon(Set.of(currentState));
 
-        if(word.isEmpty()){
+        if (word.isEmpty()) {
             Set<Configuration> res = new HashSet<>();
-            for (Integer p: S0){
-                res.add(new Configuration(p,word));
+            for (Integer p : S0) {
+                res.add(new Configuration(p, word));
             }
             return res;
 
@@ -108,19 +108,18 @@ class NFAImpl implements NFA {
         }
 
 
-
         return res;
     }
 
-    private Set<Integer> epsilon(Set<Integer> states){
+    private Set<Integer> epsilon(Set<Integer> states) {
         Set<Integer> res = new HashSet<>(states);   //copy of states
 
         Deque<Integer> stack = new java.util.ArrayDeque<>(states);
-        while (!stack.isEmpty()){
-            int stackState= stack.pop();
-            for (NFA.Transition t: transitions){
-                if(t.symbol == null && t.currentState == stackState){
-                    if(res.add(t.nextState)){
+        while (!stack.isEmpty()) {
+            int stackState = stack.pop();
+            for (NFA.Transition t : transitions) {
+                if (t.symbol == null && t.currentState == stackState) {
+                    if (res.add(t.nextState)) {
                         stack.push(t.nextState);
                     }
                 }
@@ -128,7 +127,17 @@ class NFAImpl implements NFA {
         }
         return res;
     }
-    private Set<Integer> move(Set<Integer>states, char symbol){
-        return null;
+
+    private Set<Integer> move(Set<Integer> states, char symbol) {
+        Set<Integer> newStates = new HashSet<>();
+        for (Integer s : states) {
+            for (NFA.Transition transition : transitions) {
+                if (transition.currentState == s && transition.symbol != null && transition.symbol == symbol) {
+                    newStates.add(transition.nextState);
+                }
+
+            }
+        }
+        return newStates;
     }
 }
