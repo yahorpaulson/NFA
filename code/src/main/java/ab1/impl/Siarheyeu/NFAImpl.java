@@ -3,6 +3,7 @@ package ab1.impl.Siarheyeu;
 import ab1.Configuration;
 import ab1.NFA;
 
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +35,7 @@ class NFAImpl implements NFA {
 
         this.numStates = numStates;
         this.initState = initState;
-        this.acceptingStates = Set.copyOf(acceptingStates);
+        this.acceptingStates = Set.copyOf(acceptingStates); //fully immutable
         this.transitions = List.copyOf(transitions);
     }
 
@@ -108,18 +109,22 @@ class NFAImpl implements NFA {
 
 
 
-        return null;
+        return res;
     }
 
     private Set<Integer> epsilon(Set<Integer> states){
-        Set<Integer> res = new HashSet<>(states);
+        Set<Integer> res = new HashSet<>(states);   //copy of states
 
-        for (NFA.Transition transition : transitions){
-            if(transition.symbol==null && res.contains(transition.currentState) && !res.contains(transition.nextState)){
-                res.add(transition.nextState);
+        Deque<Integer> stack = new java.util.ArrayDeque<>(states);
+        while (!stack.isEmpty()){
+            int stackState= stack.pop();
+            for (NFA.Transition t: transitions){
+                if(t.symbol == null && t.currentState == stackState){
+                    if(res.add(t.nextState)){
+                        stack.push(t.nextState);
+                    }
+                }
             }
-
-
         }
         return res;
     }
