@@ -93,8 +93,17 @@ class NFAImpl implements NFA {
 
         Set<Integer> S0 = epsilon(Set.of(currentState)); // all possible states via epsilon transitions
 
+        if (word.isEmpty()) {
+            Set<Configuration> resConfig = new HashSet<>();
+            for (Integer state : S0) {
+                resConfig.add(new Configuration(state, "")); //if word is empty -> add epsilon reachable states
+            }
+            return resConfig;
+        }
         char currentSymbol = word.charAt(0);
         String restWord = word.substring(1);
+
+
 
 
 
