@@ -32,6 +32,19 @@ class NFAImpl implements NFA {
         if (acceptingStates == null || transitions == null) {
             throw new IllegalArgumentException("Sets cannot be null");
         }
+        for (Integer state : acceptingStates) {
+            if (state < 0 || state >= numStates) {
+                throw new IllegalArgumentException("Invalid accepting state: " + state);
+            }
+        }
+        for (NFA.Transition transition : transitions) {
+            if (transition.currentState < 0 || transition.currentState >= numStates ||
+                    transition.nextState < 0 || transition.nextState >= numStates) {
+                throw new IllegalArgumentException("Invalid transition states: " + transition.currentState + " -> " + transition.nextState);
+            }
+        }
+
+
 
         this.numStates = numStates;
         this.initState = initState;
@@ -57,6 +70,8 @@ class NFAImpl implements NFA {
 
     @Override
     public boolean isAcceptingState(Integer s) {
+        if (s == null || s < 0 || s >= numStates)
+            throw new IllegalArgumentException("Illegal state error: " + s);
         return this.getAcceptingStates().contains(s);
     }
 
@@ -83,11 +98,11 @@ class NFAImpl implements NFA {
     @Override
     public Set<Configuration> step(Configuration configuration) {
         if (configuration == null) {
-            throw new NullPointerException("Configuration undefined");
+            throw new NullPointerException("Configuration undefined error");
         }
         int currentState = configuration.getState();
         if (currentState < 0 || currentState >= this.numStates) {
-            throw new IllegalArgumentException("Illegal state");
+            throw new IllegalArgumentException("Illegal state error");
         }
         String word = configuration.getWord();
 
@@ -143,7 +158,7 @@ class NFAImpl implements NFA {
         Set<Integer> newStates = new HashSet<>();
         for (Integer s : states) {
             for (NFA.Transition transition : transitions) {
-                if (transition.currentState == s && transition.symbol != null && transition.symbol == symbol) {
+                if (transition.currentState.equals(s) && transition.symbol != null && transition.symbol == symbol) {
                     newStates.add(transition.nextState);
                 }
 
