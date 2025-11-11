@@ -3,10 +3,7 @@ package ab1.impl.Siarheyeu;
 import ab1.Configuration;
 import ab1.NFA;
 
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 class NFAImpl implements NFA {
@@ -82,7 +79,49 @@ class NFAImpl implements NFA {
 
     @Override
     public NFA union(NFA a) {
-        return null;
+        if(a == null) {
+            throw new NullPointerException("NFA 'a' is null");
+        }
+        //create new NFA
+        NFA newNFA;
+
+        //define offsets for states of both NFAs in the new NFA
+        final int offsetA = 1;
+        final int offsetB = 1 + this.getNumStates();
+
+        final int newInit = 0; //new initial state
+        final int newNumStates = 1 + this.getNumStates() + a.getNumStates(); // number of total states
+
+        List <NFA.Transition> newTransitions = new ArrayList<>();
+
+        newTransitions.add(new NFA.Transition(newInit, null, this.getInitialState() + offsetA)); //epsilon transition to initial state of first NFA
+        newTransitions.add(new NFA.Transition(newInit, null, a.getInitialState() + offsetB)); //epsilon transition to initial state of second NFA
+
+
+        for(NFA.Transition t : this.getTransitions()) {
+            newTransitions.add(new NFA.Transition(t.currentState + offsetA, t.symbol, t.nextState + offsetA));
+        } //set new transitions taking into account the offset for 3 -> 5 will be 4 -> 6
+
+        for(NFA.Transition t : a.getTransitions()) {
+            newTransitions.add(new NFA.Transition(t.currentState + offsetB, t.symbol, t.nextState + offsetB));
+        } //same for second NFA
+
+
+        //define new accepting states taking into account offsets, same as for transitions
+        Set<Integer> newAcceptingStates = new HashSet<>();
+        for(Integer s : this.getAcceptingStates()) {
+            newAcceptingStates.add(s + offsetA);
+        }
+        for(Integer s : a.getAcceptingStates()) {
+            newAcceptingStates.add(s + offsetB);
+        }
+
+        return new NFAImpl(
+                newNumStates,
+                newInit,
+                newAcceptingStates,
+                newTransitions
+        );
     }
 
     @Override
