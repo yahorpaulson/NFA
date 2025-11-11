@@ -91,24 +91,26 @@ class NFAImpl implements NFA {
         }
         String word = configuration.getWord();
 
-        Set<Integer> S0 = epsilon(Set.of(currentState));
+        Set<Integer> S0 = epsilon(Set.of(currentState)); // all possible states via epsilon transitions
 
-        if (word.isEmpty()) {
-            Set<Configuration> res = new HashSet<>();
-            for (Integer p : S0) {
-                res.add(new Configuration(p, word));
+        char currentSymbol = word.charAt(0);
+        String restWord = word.substring(1);
+
+
+
+        Set<Integer> statesAfterMove = move(S0, currentSymbol); // states reachable after consuming current symbol
+
+        Set<Configuration> resConfig = new HashSet<>();
+        for (Integer s : statesAfterMove) {
+            Set<Integer> S1 = epsilon(Set.of(s));
+            for (Integer state : S1) {
+                resConfig.add(new Configuration(state, restWord)); // add new configurations
             }
-            return res;
-
-
-        } else {
-            char firstLetter = word.charAt(0);
-            String restWord = word.substring(1);
-
         }
 
 
-        return res;
+
+        return resConfig;
     }
 
     private Set<Integer> epsilon(Set<Integer> states) {
