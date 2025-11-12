@@ -6,7 +6,7 @@ import ab1.NFA;
 import java.util.*;
 
 
-class NFAImpl implements NFA {
+public class NFAImpl implements NFA {
 
     private final int numStates;
     private final Integer initState;
@@ -48,6 +48,13 @@ class NFAImpl implements NFA {
         this.acceptingStates = Set.copyOf(acceptingStates); //fully immutable
         this.transitions = List.copyOf(transitions);
     }
+
+    public NFAImpl() {
+        this.numStates = 0;
+        this.initState = 0;
+        this.acceptingStates = Set.of();
+        this.transitions = List.of();
+    } // default constructor for empty NFA ?????
 
 
     @Override
@@ -227,7 +234,7 @@ class NFAImpl implements NFA {
         char currentSymbol = word.charAt(0);
         String restWord = word.substring(1);
 
-        
+
 
 
         Set<Integer> statesAfterMove = move(S0, currentSymbol); // states reachable after consuming current symbol
