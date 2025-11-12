@@ -169,7 +169,39 @@ class NFAImpl implements NFA {
 
     @Override
     public NFA kleeneStar() {
-        return null;
+        if(this.numStates == 0) {
+            throw new IllegalStateException("Kleene star error: NFA has no states");
+        }
+
+
+        Integer initState = 0;
+        int newNumStates = this.numStates + 1; //new initial state added
+
+        List<NFA.Transition> newTransitions = new ArrayList<>();
+        newTransitions.add(new NFA.Transition(initState, null, this.getInitialState() + 1)); //epsilon transition to old initial state
+
+
+
+        for(NFA.Transition t : this.getTransitions()) {
+            newTransitions.add(new NFA.Transition(t.currentState + 1, t.symbol, t.nextState + 1));
+        } //add old transitions with offset
+
+        for(Integer s : this.getAcceptingStates()) {
+            newTransitions.add(new NFA.Transition(s + 1, null, initState));
+        } //add epsilon transitions from old accepting states to old initial state
+
+        Set<Integer> newAcceptingStates = new HashSet<>();
+        newAcceptingStates.add(initState); //new initial state is also accepting
+        for(Integer s : this.getAcceptingStates()) {
+            newAcceptingStates.add(s + 1);
+        } //add old accepting states with offset
+        return new NFAImpl(
+                newNumStates,
+                initState,
+                newAcceptingStates,
+                newTransitions
+        );
+
     }
 
     @Override
@@ -195,8 +227,7 @@ class NFAImpl implements NFA {
         char currentSymbol = word.charAt(0);
         String restWord = word.substring(1);
 
-
-
+        
 
 
         Set<Integer> statesAfterMove = move(S0, currentSymbol); // states reachable after consuming current symbol
