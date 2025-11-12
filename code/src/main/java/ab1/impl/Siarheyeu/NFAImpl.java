@@ -80,10 +80,9 @@ class NFAImpl implements NFA {
     @Override
     public NFA union(NFA a) {
         if(a == null) {
-            throw new NullPointerException("NFA 'a' is null");
+            throw new NullPointerException("Union error: NFA 'a' is null");
         }
-        //create new NFA
-        NFA newNFA;
+
 
         //define offsets for states of both NFAs in the new NFA
         final int offsetA = 1;
@@ -126,7 +125,46 @@ class NFAImpl implements NFA {
 
     @Override
     public NFA concat(NFA a) {
-        return null;
+        if (a == null) {
+            throw new NullPointerException("Concat error: NFA 'a' is null");
+        }
+        int offset = this.getNumStates();
+        int newNumStates = this.getNumStates() + a.getNumStates();
+
+        List <NFA.Transition> newTransitions = new ArrayList<>(); //new list of transitions for new NFA
+
+        for(NFA.Transition t : this.getTransitions()) {
+            newTransitions.add(new NFA.Transition(t.currentState, t.symbol, t.nextState));
+        } //add transitions of first NFA as is
+        for(NFA.Transition t : a.getTransitions()) {
+            newTransitions.add(new NFA.Transition(t.currentState + offset, t.symbol, t.nextState + offset));
+        } //add transitions of second NFA with offset
+
+
+        for(Integer s : this.getAcceptingStates()) {
+            newTransitions.add(new NFA.Transition(s, null, a.getInitialState() + offset));
+        } //add epsilon transitions from accepting states of first NFA to initial state of second NFA
+
+        Set<Integer> newAcceptingStates = new HashSet<>();
+        for(Integer s : this.acceptingStates) {
+            newAcceptingStates.add(s);
+        }
+        for (Integer s : a.getAcceptingStates()) {
+            newAcceptingStates.add(s + offset);
+        } //define new accepting states taking into account offsets
+
+
+
+
+
+
+        return new NFAImpl(
+                newNumStates,
+                this.getInitialState(),
+                newAcceptingStates,
+                newTransitions
+
+        );
     }
 
     @Override
