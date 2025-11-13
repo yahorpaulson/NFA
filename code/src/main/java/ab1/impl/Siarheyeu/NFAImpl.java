@@ -49,12 +49,7 @@ public class NFAImpl implements NFA {
         this.transitions = List.copyOf(transitions);
     }
 
-    public NFAImpl() {
-        this.numStates = 0;
-        this.initState = 0;
-        this.acceptingStates = Set.of();
-        this.transitions = List.of();
-    } // default constructor for empty NFA ?????
+
 
 
     @Override
